@@ -5,7 +5,8 @@ var bowerDir = 'bower_components/';
 var sources = [
     'bower_components/firebase/firebase.js',
     'bower_components/qrcodejs/qrcode.min.js',
-    'bower_components/quojs/quo.standalone.js',
+    //'bower_components/quojs/quo.standalone.js',
+    'quo.js',
     'index.js'
 ];
 
