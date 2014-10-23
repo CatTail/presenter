@@ -3,15 +3,17 @@
   "description": "Dead simple slide remote control & synchronization",
   "repository": "CatTail/presenter",
   "version": "0.0.1",
-  "keywords": [
-  ],
+  "keywords": [],
   "files": [
     "index.js"
   ],
   "devDependencies": {
     "istanbul-harmony": "0",
     "mocha": "1",
-    "should": "*"
+    "should": "*",
+    "gulp-uglify": "^1.0.1",
+    "gulp-load-plugins": "^0.7.0",
+    "gulp-concat": "^2.4.1"
   },
   "license": "MIT",
   "dependencies": {
