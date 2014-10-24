@@ -21,6 +21,12 @@ In the scenery of slide remote control, follow instruction:
 
 Now, play your slide in smartphone will be broadcast to all the subscribers.
 
+## How it works
+
+`presenter` only works with slide written in html and use hash tag to represent slide index, for example, [remark](https://github.com/gnab/remark).
+
+Publisher slide index will be broadcast using firebase to notify the change of all the subscribers.
+
 ## License
 
 MIT
