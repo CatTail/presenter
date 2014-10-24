@@ -3,31 +3,44 @@ var firebase = new Firebase('https://zhongchiyu.firebaseio.com/');
 // remove hash, conver to base64
 var appName = btoa(location.href.slice(0, location.href.indexOf(location.hash)));
 
-/* qrcode */
-$$(document.body).append('<div id="qrcode" class="hidden"></div>');
-var qrcodeEl = document.getElementById('qrcode');
-var qrcode = new QRCode(qrcodeEl, location.href);
+var hammer = new Hammer(document.body);
 
-$$('body').on('doubleTap', function() {
+/* qrcode */
+var qrcodeEl = document.createElement('div');
+qrcodeEl.style.display = 'none';
+qrcodeEl.style.position = 'absolute';
+qrcodeEl.style.top = '0';
+qrcodeEl.style.right = '0';
+qrcodeEl.style.zIndex = '1000';
+document.body.appendChild(qrcodeEl);
+new QRCode(qrcodeEl, location.href);
+
+hammer.on('doubletap', function() {
     var lock = false;
 
-    $$('body').on('hold', toggleQRCode);
-    $$('body').on('singleTap', togglePublish);
+    hammer.on('press', toggleQRCode);
+    hammer.on('tap', togglePublish);
 
     setTimeout(function() {
-        $$('body').off('singleTap', togglePublish);
-        $$('body').off('hold', toggleQRCode);
+        hammer.off('press', toggleQRCode);
+        hammer.off('tap', togglePublish);
         if (!lock) subscribe();
     }, 1000);
 
     function togglePublish() {
         lock = true;
+        hammer.off('tap', togglePublish);
         publish();
     }
 
     function toggleQRCode() {
         lock = true;
-        $$(qrcodeEl).toggleClass('hidden');
+        hammer.off('press', toggleQRCode);
+        if (qrcodeEl.style.display === 'none') {
+            qrcodeEl.style.display = 'block';
+        } else {
+            qrcodeEl.style.display = 'none';
+        }
     }
 });
 

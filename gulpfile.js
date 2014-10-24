@@ -11,6 +11,7 @@ var sources = [
 
 gulp.task('dev', function() {
     gulp.watch(sources, function() {
+        console.log('File change', arguments);
         gulp.src(sources)
             .pipe(plugins.concat('presenter.min.js'))
             .pipe(gulp.dest('dist'));
