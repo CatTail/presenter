@@ -1,0 +1,4 @@
+#! /bin/bash
+
+npm run lint
+make clean && make build PRODUCTION=true
