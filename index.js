@@ -12,20 +12,31 @@ function Presenter (password) {
     conn.on('data', self.onDatahandler)
   })
 
-  // initialize publish mode
-  var pass = password.split('').join(' ')
-  cheet(pass, function () {
-    self.publish()
-    cheet.disable(pass)
-  })
-
-  // active subscribe mode
-  self.subscribe()
-
-  // qrcode
   self.createQRCode()
-  cheet('q', function () {
-    self.toggleQRCode()
+  self.subscribe()
+  self.listenTouchEvent()
+}
+
+Presenter.prototype.listenTouchEvent = function () {
+  var self = this
+  var hammer = new Hammer(document.body)
+
+  hammer.on('doubletap', function () {
+    hammer.on('press', togglePublish)
+    hammer.on('tap', toggleQRCode)
+
+    setTimeout(function () {
+      hammer.off('press', togglePublish)
+      hammer.off('tap', toggleQRCode)
+    }, 1000)
+
+    function togglePublish () {
+      self.publish()
+    }
+
+    function toggleQRCode () {
+      self.toggleQRCode()
+    }
   })
 }
 
