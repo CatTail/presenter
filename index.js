@@ -21,21 +21,22 @@ Presenter.prototype.listenTouchEvent = function () {
   var self = this
   var hammer = new Hammer(document.body)
 
+  document.addEventListener('keypress', function (event) {
+    if (event.key === 'q') {
+      self.toggleQRCode()
+    }
+  }, false)
+
   hammer.on('doubletap', function () {
-    hammer.on('press', togglePublish)
-    hammer.on('tap', toggleQRCode)
+    hammer.on('tap', togglePublish)
 
     setTimeout(function () {
-      hammer.off('press', togglePublish)
-      hammer.off('tap', toggleQRCode)
+      hammer.off('tap', togglePublish)
     }, 1000)
 
     function togglePublish () {
+      hammer.off('tap', togglePublish)
       self.publish()
-    }
-
-    function toggleQRCode () {
-      self.toggleQRCode()
     }
   })
 }
