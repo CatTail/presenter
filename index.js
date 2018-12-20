@@ -43,7 +43,6 @@ Presenter.prototype.listenTouchEvent = function () {
 
 Presenter.prototype.publish = function () {
   window.alert('publish mode on')
-  this.toggleQRCode()
   window.onhashchange = this.onHashChange.bind(this)
 }
 
