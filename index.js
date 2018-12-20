@@ -1,7 +1,7 @@
 function Presenter (password) {
   // remove hash, conver to base64
   this.appName = window.btoa(window.location.href.slice(0, window.location.href.indexOf(window.location.hash)))
-  this.peerId = this.appName + ': ' + Math.random()
+  this.peerId = this.appName + ' ' + Math.random().toString().slice(2)
   this.peer = new Peer(this.peerId, { host: 'peerjs.now.sh', port: 443, secure: true })
 
   // initialize publish mode
