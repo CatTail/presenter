@@ -2,7 +2,7 @@
 
 > Dead simple slide remote control & synchronization
 
-[Live Demo](bower_components/presenter/dist/presenter.min.js)
+[Live Demo](https://cattail.me/slide/2014/10/21/introduce-to-asyncio.html#1)
 
 ## Installation
 
