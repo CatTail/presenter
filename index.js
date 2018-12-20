@@ -7,9 +7,9 @@ function Presenter (password) {
   self.peerId = self.appName + ' ' + Math.random().toString().slice(2)
   self.peer = new Peer(self.peerId, { host: 'peerjs.now.sh', port: 443, secure: true })
 
-  self.fetchPeers()
   self.peer.on('connection', function (conn) {
     self.peers[conn.peer] = conn
+    conn.on('data', self.onDatahandler)
   })
 
   // initialize publish mode
@@ -36,20 +36,16 @@ Presenter.prototype.publish = function () {
 }
 
 Presenter.prototype.subscribe = function () {
-  this.peer.on('connection', function (conn) {
-    conn.on('data', function (data) {
-      window.location.href = data
-    })
-  })
-}
-
-Presenter.prototype.fetchPeers = function () {
   var self = this
   this.peer.listAllPeers(function (peers) {
     peers
       .filter(function (id) { return id !== self.peerId })
       .forEach(function (id) {
-        self.peers[id] = self.peers[id] || self.peer.connect(id)
+        if (!self.peers[id]) {
+          var conn = self.peer.connect(id)
+          conn.on('data', self.onDatahandler)
+          self.peers[id] = conn
+        }
       })
   })
 }
@@ -59,6 +55,10 @@ Presenter.prototype.onHashChange = function () {
   Object.keys(self.peers)
     .filter(function (id) { return self.peers[id].open })
     .forEach(function (id) { self.peers[id].send(window.location.href) })
+}
+
+Presenter.prototype.onDatahandler = function (data) {
+  window.location.href = data
 }
 
 Presenter.prototype.createQRCode = function () {
