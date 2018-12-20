@@ -1,25 +1,38 @@
 function Presenter (password) {
+  var self = this
+
   // remove hash, conver to base64
-  this.appName = window.btoa(window.location.href.slice(0, window.location.href.indexOf(window.location.hash)))
-  this.peerId = this.appName + ' ' + Math.random().toString().slice(2)
-  this.peer = new Peer(this.peerId, { host: 'peerjs.now.sh', port: 443, secure: true })
-  this.subscribers = {}
+  self.appName = window.btoa(window.location.href.slice(0, window.location.href.indexOf(window.location.hash)))
+  self.peers = {}
+  self.peerId = self.appName + ' ' + Math.random().toString().slice(2)
+  self.peer = new Peer(self.peerId, { host: 'peerjs.now.sh', port: 443, secure: true })
+
+  self.fetchPeers()
+  self.peer.on('connection', function (conn) {
+    self.peers[conn.peer] = conn
+  })
 
   // initialize publish mode
   var pass = password.split('').join(' ')
   cheet(pass, function () {
-    this.publish()
+    self.publish()
     cheet.disable(pass)
-  }.bind(this))
+  })
 
   // active subscribe mode
-  this.subscribe()
+  self.subscribe()
 
   // qrcode
-  this.createQRCode()
+  self.createQRCode()
   cheet('q', function () {
-    this.toggleQRCode()
-  }.bind(this))
+    self.toggleQRCode()
+  })
+}
+
+Presenter.prototype.publish = function () {
+  window.alert('publish mode on')
+  this.toggleQRCode()
+  window.onhashchange = this.onHashChange.bind(this)
 }
 
 Presenter.prototype.subscribe = function () {
@@ -30,29 +43,22 @@ Presenter.prototype.subscribe = function () {
   })
 }
 
-Presenter.prototype.publish = function () {
-  window.alert('publish mode on')
-  this.toggleQRCode()
-  setInterval(this.refreshSubscribers.bind(this), 1000)
-  window.onhashchange = this.onHashChange.bind(this)
-}
-
-Presenter.prototype.refreshSubscribers = function () {
+Presenter.prototype.fetchPeers = function () {
   var self = this
   this.peer.listAllPeers(function (peers) {
     peers
       .filter(function (id) { return id !== self.peerId })
       .forEach(function (id) {
-        self.subscribers[id] = self.subscribers[id] || self.peer.connect(id)
+        self.peers[id] = self.peers[id] || self.peer.connect(id)
       })
   })
 }
 
 Presenter.prototype.onHashChange = function () {
   var self = this
-  Object.keys(self.subscribers)
-    .filter(function (id) { return self.subscribers[id].open })
-    .forEach(function (id) { self.subscribers[id].send(window.location.href) })
+  Object.keys(self.peers)
+    .filter(function (id) { return self.peers[id].open })
+    .forEach(function (id) { self.peers[id].send(window.location.href) })
 }
 
 Presenter.prototype.createQRCode = function () {
