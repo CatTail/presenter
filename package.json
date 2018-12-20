@@ -27,5 +27,8 @@
       "standard --fix",
       "git add"
     ]
+  },
+  "standard": {
+    "globals": [ "Peer", "cheet", "QRCode" ]
   }
 }

@@ -1,20 +1,8 @@
-/* global Firebase */
-/* pubsub */
-var firebase = new Firebase('https://presenterjs.firebaseio.com/')
-// remove hash, conver to base64
-var APPNAME = window.btoa(window.location.href.slice(0, window.location.href.indexOf(window.location.hash)))
-var i18n = {
-  zh: {
-    publish: '开启发布者模式'
-  },
-  en: {
-    publish: 'publish mode on'
-  }
-}
-
-function Presenter (password, language) {
-  if (!(this instanceof Presenter)) return new Presenter(password, language)
-  this.messages = i18n[language || 'en']
+function Presenter (password) {
+  // remove hash, conver to base64
+  this.appName = window.btoa(window.location.href.slice(0, window.location.href.indexOf(window.location.hash)))
+  this.peerId = this.appName + ': ' + Math.random()
+  this.peer = new Peer(this.peerId, { host: 'peerjs.now.sh', port: 443, secure: true })
 
   // initialize publish mode
   var pass = password.split('').join(' ')
@@ -34,23 +22,33 @@ function Presenter (password, language) {
 }
 
 Presenter.prototype.subscribe = function () {
-  // firebase.child(APPNAME).off('value')
-  firebase.child(APPNAME).on('value', function (snapshot) {
-    console.log(snapshot.val())
-    location.href = snapshot.val()
+  this.peer.on('connection', function (conn) {
+    conn.on('data', function (data) {
+      window.location.href = data
+    })
   })
 }
 
 Presenter.prototype.publish = function () {
-  alert(this.messages.publish)
+  window.alert('publish mode on')
   this.toggleQRCode()
+  setInterval(this.refreshSubscribers.bind(this), 1000)
   window.onhashchange = this.onHashChange
 }
 
+Presenter.prototype.refreshSubscribers = function () {
+  var self = this
+  this.peer.listAllPeers(function (peers) {
+    self.subscribers = peers
+      .filter(function (id) { return id !== self.peerId })
+      .map(function (id) { return self.peer.connect(id) })
+  })
+}
+
 Presenter.prototype.onHashChange = function () {
-  var data = {}
-  data[APPNAME] = location.href
-  firebase.update(data)
+  this.subscribers
+    .filter(function (subscriber) { return subscriber.open })
+    .forEach(function (subscriber) { subscriber.send(window.location.href) })
 }
 
 Presenter.prototype.createQRCode = function () {
@@ -61,7 +59,7 @@ Presenter.prototype.createQRCode = function () {
   this.elCode.style.right = '0'
   this.elCode.style.zIndex = '1000'
   document.body.appendChild(this.elCode)
-  new QRCode(this.elCode, location.href)
+  return new QRCode(this.elCode, window.location.href)
 }
 
 Presenter.prototype.toggleQRCode = function () {
@@ -72,7 +70,5 @@ Presenter.prototype.toggleQRCode = function () {
   }
 }
 
-Presenter('god')
-
-// TODO
-// module.exports = Presenter
+// eslint-disable-next-line
+new Presenter('god')
