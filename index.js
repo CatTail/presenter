@@ -3,6 +3,7 @@ function Presenter (password) {
   this.appName = window.btoa(window.location.href.slice(0, window.location.href.indexOf(window.location.hash)))
   this.peerId = this.appName + ' ' + Math.random().toString().slice(2)
   this.peer = new Peer(this.peerId, { host: 'peerjs.now.sh', port: 443, secure: true })
+  this.subscribers = {}
 
   // initialize publish mode
   var pass = password.split('').join(' ')
@@ -39,16 +40,19 @@ Presenter.prototype.publish = function () {
 Presenter.prototype.refreshSubscribers = function () {
   var self = this
   this.peer.listAllPeers(function (peers) {
-    self.subscribers = peers
+    peers
       .filter(function (id) { return id !== self.peerId })
-      .map(function (id) { return self.peer.connect(id) })
+      .forEach(function (id) {
+        self.subscribers[id] = self.subscribers[id] || self.peer.connect(id)
+      })
   })
 }
 
 Presenter.prototype.onHashChange = function () {
-  this.subscribers
-    .filter(function (subscriber) { return subscriber.open })
-    .forEach(function (subscriber) { subscriber.send(window.location.href) })
+  var self = this
+  Object.keys(self.subscribers)
+    .filter(function (id) { return self.subscribers[id].open })
+    .forEach(function (id) { self.subscribers[id].send(window.location.href) })
 }
 
 Presenter.prototype.createQRCode = function () {
