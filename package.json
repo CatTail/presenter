@@ -29,6 +29,6 @@
     ]
   },
   "standard": {
-    "globals": [ "Peer", "cheet", "QRCode" ]
+    "globals": [ "Peer", "Hammer", "QRCode" ]
   }
 }
