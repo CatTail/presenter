@@ -34,7 +34,7 @@ Presenter.prototype.publish = function () {
   window.alert('publish mode on')
   this.toggleQRCode()
   setInterval(this.refreshSubscribers.bind(this), 1000)
-  window.onhashchange = this.onHashChange
+  window.onhashchange = this.onHashChange.bind(this)
 }
 
 Presenter.prototype.refreshSubscribers = function () {
