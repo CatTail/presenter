@@ -3,8 +3,10 @@ function Presenter (password) {
 
   // remove hash, conver to base64
   self.appName = window.btoa(window.location.href.slice(0, window.location.href.indexOf(window.location.hash)))
+  // limit maximum peerId length
+  self.namespace = self.appName.replace(/[^a-zA-Z0-9]+/g, '')
   self.peers = {}
-  self.peerId = self.appName + ' ' + Math.random().toString().slice(2)
+  self.peerId = self.namespace + ' ' + Math.random().toString().slice(2)
   self.peer = new Peer(self.peerId, { host: 'peerjs.now.sh', port: 443, secure: true })
 
   self.peer.on('connection', function (conn) {
@@ -50,7 +52,8 @@ Presenter.prototype.subscribe = function () {
   var self = this
   this.peer.listAllPeers(function (peers) {
     peers
-      .filter(function (id) { return id !== self.peerId })
+      // filter peers in the same namespace
+      .filter(function (id) { return id !== self.peerId && id.split(' ')[0] === self.namespace })
       .forEach(function (id) {
         if (!self.peers[id]) {
           var conn = self.peer.connect(id)
