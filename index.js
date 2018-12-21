@@ -3,7 +3,7 @@ function Presenter (password) {
 
   // remove hash, conver to base64
   self.appName = window.btoa(window.location.href.slice(0, window.location.href.indexOf(window.location.hash)))
-  // limit maximum peerId length
+  // remove invalid characters
   self.namespace = self.appName.replace(/[^a-zA-Z0-9]+/g, '')
   self.peers = {}
   self.peerId = self.namespace + ' ' + Math.random().toString().slice(2)
