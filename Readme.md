@@ -6,21 +6,20 @@
 
 ## Installation
 
-Use presenter.min.js from CDN
+Include presenter.min.js from CDN
 
     <script src="https://cdn.jsdelivr.net/gh/cattail/presenter@1aa45d4/dist/presenter.min.js" type="text/javascript" charset="utf-8"></script>
 
-Or download from https://raw.githubusercontent.com/CatTail/presenter/master/dist/presenter.min.js
+Or download it from https://raw.githubusercontent.com/CatTail/presenter/master/dist/presenter.min.js
 
 ## Usage
 
-In the scenery of slide remote control, follow instruction:
+1. Open slide in laptop that will be controlled, press `q` to display qrcode.
+2. Scan qrcode with mobile, open link in mobile browser.
+3. Tap 6 times in mobile browser to enable publish mode.
+4. Now you can control laptop slide with your mobile.
 
-1. open slide in laptop which will be controlled, click three times to display an qrcode.  ![qrcode](./assets/qrcode.gif)
-2. use your smartphone to scan the qrcode.
-3. double tap after a long press to activate `publish mode`. (here we use a laptop to demostrate how to activate publish mode) ![publish mode](./assets/publish-mode.gif)
-
-Now, play your slide in smartphone will be broadcast to all the subscribers.
+![usage](./assets/usage.gif)
 
 ## How it works
 
